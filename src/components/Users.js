@@ -1,4 +1,5 @@
 import React from 'react';
+import Header from './Header'; 
 import Sidebar from './Sidebar';
 import { FiUser, FiUsers, FiSearch } from 'react-icons/fi';
 import { motion } from 'framer-motion';

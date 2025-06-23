@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from './Sidebar';
+import Header from './Header'; 
 import { 
   FiUser, 
   FiBriefcase, 

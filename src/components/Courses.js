@@ -1,5 +1,6 @@
 import React from 'react';
 import Sidebar from './Sidebar';
+import Header from './Header'; 
 import { FiBook, FiSearch, FiPlus } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 

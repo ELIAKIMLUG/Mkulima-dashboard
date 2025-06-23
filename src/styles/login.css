@@ -1,0 +1,226 @@
+/* src/styles/Login.css */
+
+/* Base Styles */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  transform: translateY(0);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.login-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+/* Form Elements */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  position: relative;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background-color: #f8fafc;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background-color: white;
+}
+
+/* Password Toggle */
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #a0aec0;
+}
+
+/* Submit Button */
+.login-button {
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(to right, #79cab3, #62b587);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+/* Error Message */
+.error-message {
+  color: #e53e3e;
+  background-color: #fff5f5;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  border: 1px solid #fed7d7;
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* Footer Links */
+.login-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #01070f;
+}
+
+.login-footer a {
+  color: #010309;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+  
+  .login-title {
+    font-size: 1.5rem;
+  }
+}
+/* Center the form container */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+}
+
+/* Form card styling */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  margin: 20px; /* Prevents touching screen edges on mobile */
+}
+
+/* Responsive centering */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 30px;
+    margin: 15px;
+  }
+}
+/* Error states */
+.form-group.error .form-input {
+  border-color: #e53e3e;
+  background-color: #fff5f5;
+}
+
+.field-error {
+  color: #e53e3e;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Loading state */
+.button-loader {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Disabled state */
+.login-button:disabled {
+  background: #cbd5e0;
+  cursor: not-allowed;
+  transform: none !important;
+}
