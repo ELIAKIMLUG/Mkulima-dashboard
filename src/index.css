@@ -1,3 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* In your global styles or tailwind.css */
+.sidebar-item {
+  @apply flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-green-100 transition;
+}
+
+.sidebar-item.active {
+  @apply bg-green-100 text-green-800 font-semibold;
+}
+
+.sidebar-toggle {
+  @apply flex items-center justify-center text-green-800 text-sm py-2 rounded-md hover:bg-green-100;
+}
+
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,6 +23,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #F7FBF1; /* Light green background */
 }
 
 code {

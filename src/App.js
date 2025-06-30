@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
 import Dashboard from './components/Dashboard';
 import Users from './components/Users';
 import Courses from './components/Courses';
 import Files from './components/Files';
 import Admin from './components/Admin';
 import Settings from './components/Settings';
-import Login from './components/Login'; // New login component
+import Login from './components/Login';
+
+import { AuthContext } from './context/AuthContext';
+
 import './App.css';
 import './styles/dashboard.css';
 import './styles/users.css';
@@ -14,91 +18,88 @@ import './styles/courses.css';
 import './styles/files.css';
 import './styles/admin.css';
 import './styles/settings.css';
-import './styles/login.css';  // Match the exact file name case
+import './styles/login.css';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  // Check if user is logged in on app load
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
-    }
-    setLoading(false);
-  }, []);
+  const { authToken, login, logout } = useContext(AuthContext);
 
   // Protected Route Wrapper
   const ProtectedRoute = ({ children }) => {
-    if (!isAuthenticated) {
+    if (!authToken) {
       return <Navigate to="/login" replace />;
     }
     return children;
   };
 
-  // Login handler
-  const handleLogin = (token) => {
-    localStorage.setItem('token', token);
-    setIsAuthenticated(true);
-  };
-
-  // Logout handler
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsAuthenticated(false);
-  };
-
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
-
   return (
     <Router>
       <div className="app">
         <Routes>
-          <Route 
-            path="/login" 
-            element={isAuthenticated ? 
-              <Navigate to="/" replace /> : 
-              <Login onLogin={handleLogin} />} 
+          <Route
+            path="/login"
+            element={
+              authToken ? (
+                <Navigate to="/" replace />
+              ) : (
+                // Pass the login function to Login component
+                <Login onLogin={login} />
+              )
+            }
           />
-          
-          <Route path="/" element={
-            <ProtectedRoute>
-              <Dashboard onLogout={handleLogout} />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/users" element={
-            <ProtectedRoute>
-              <Users onLogout={handleLogout} />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/courses" element={
-            <ProtectedRoute>
-              <Courses onLogout={handleLogout} />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/files" element={
-            <ProtectedRoute>
-              <Files onLogout={handleLogout} />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/admin" element={
-            <ProtectedRoute>
-              <Admin onLogout={handleLogout} />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/settings" element={
-            <ProtectedRoute>
-              <Settings onLogout={handleLogout} />
-            </ProtectedRoute>
-          } />
+
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Dashboard onLogout={logout} />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute>
+                <Users onLogout={logout} />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/courses"
+            element={
+              <ProtectedRoute>
+                <Courses onLogout={logout} />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/files"
+            element={
+              <ProtectedRoute>
+                <Files onLogout={logout} />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <Admin onLogout={logout} />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings onLogout={logout} />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
     </Router>

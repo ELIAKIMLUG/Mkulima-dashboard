@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
-import Header from './Header'; 
 import { FiSettings, FiUser, FiLock, FiBell, FiDatabase, FiGlobe } from 'react-icons/fi';
 
 const Settings = () => {
