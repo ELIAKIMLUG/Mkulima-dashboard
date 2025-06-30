@@ -1,326 +1,25 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FiMenu, FiUser, FiMail, FiPhone, FiLock, FiCheckCircle, FiUserCheck, FiBriefcase, FiUsers, FiFileText, FiBook } from 'react-icons/fi';
+import { Doughnut, Line } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title } from 'chart.js';
+import { FiMenu, FiUser, FiUsers, FiUserCheck, FiBriefcase } from 'react-icons/fi';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import { Doughnut, Line } from 'react-chartjs-2';
 import { AuthContext } from '../context/AuthContext';
-import zxcvbn from 'zxcvbn';
+import AddUserModal from './AddUserModal';
 
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title
-} from 'chart.js';
-
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title
-);
-
-// AddUserModal component, embedded here for completeness
-const AddUserModal = ({ onClose, onSave, loading }) => {
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    role: '',
-  });
-  const [errors, setErrors] = useState({});
-  const [passwordStrength, setPasswordStrength] = useState(0);
-
-  const validate = () => {
-    const e = {};
-    if (!form.name.trim()) e.name = 'Name is required';
-    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) e.email = 'Valid email is required';
-    if (!form.phone.trim()) e.phone = 'Phone number is required';
-    if (!form.role) e.role = 'Please select role';
-    if (form.password.length < 6) e.password = 'Password must be at least 6 characters';
-    if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match';
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-
-    if (name === 'password') {
-      if (value.length > 0) {
-        const strength = zxcvbn(value).score;
-        setPasswordStrength(strength);
-      } else {
-        setPasswordStrength(0);
-      }
-    }
-  };
-
-  const handleSubmit = () => {
-    if (validate()) {
-      onSave(form);
-    }
-  };
-
-  const strengthLabels = ['Very Weak', 'Weak', 'Fair', 'Strong', 'Very Strong'];
-  const strengthColors = ['#ff3b30', '#ff9500', '#ffcc00', '#4cd964', '#34c759'];
-
-  return (
-    <div className="modal-overlay">
-      <div className="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        <h2 id="modal-title">Add User</h2>
-
-        {/* Name */}
-        <label className="input-label">
-          <FiUser className="input-icon" />
-          <input
-            name="name"
-            placeholder="Full Name"
-            value={form.name}
-            onChange={handleChange}
-            className={errors.name ? 'input-error' : ''}
-          />
-        </label>
-        {errors.name && <small className="error-text">{errors.name}</small>}
-
-        {/* Email */}
-        <label className="input-label">
-          <FiMail className="input-icon" />
-          <input
-            name="email"
-            type="email"
-            placeholder="Email Address"
-            value={form.email}
-            onChange={handleChange}
-            className={errors.email ? 'input-error' : ''}
-          />
-        </label>
-        {errors.email && <small className="error-text">{errors.email}</small>}
-
-        {/* Phone */}
-        <label className="input-label">
-          <FiPhone className="input-icon" />
-          <input
-            name="phone"
-            placeholder="Phone Number"
-            value={form.phone}
-            onChange={handleChange}
-            className={errors.phone ? 'input-error' : ''}
-          />
-        </label>
-        {errors.phone && <small className="error-text">{errors.phone}</small>}
-
-        {/* Role */}
-        <label className="input-label role-select-label">
-          <FiUserCheck className="input-icon" />
-          <select name="role" value={form.role} onChange={handleChange} className={errors.role ? 'input-error' : ''}>
-            <option value="">Select Role</option>
-            <option value="regular">Regular</option>
-            <option value="expert">Expert</option>
-          </select>
-        </label>
-        {errors.role && <small className="error-text">{errors.role}</small>}
-
-        {/* Password */}
-        <label className="input-label">
-          <FiLock className="input-icon" />
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            className={errors.password ? 'input-error' : ''}
-          />
-        </label>
-        {errors.password && <small className="error-text">{errors.password}</small>}
-
-        {/* Password Strength */}
-        {form.password && (
-          <div className="password-strength">
-            <span>Password strength: </span>
-            <span style={{ color: strengthColors[passwordStrength], fontWeight: '600' }}>
-              {strengthLabels[passwordStrength]}
-            </span>
-            <div className="strength-bars">
-              {[0,1,2,3,4].map(i => (
-                <div
-                  key={i}
-                  className="strength-bar"
-                  style={{ backgroundColor: i <= passwordStrength ? strengthColors[passwordStrength] : '#ddd' }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Confirm Password */}
-        <label className="input-label">
-          <FiCheckCircle className="input-icon" />
-          <input
-            name="confirmPassword"
-            type="password"
-            placeholder="Confirm Password"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            className={errors.confirmPassword ? 'input-error' : ''}
-          />
-        </label>
-        {errors.confirmPassword && <small className="error-text">{errors.confirmPassword}</small>}
-
-        {/* Buttons */}
-        <div className="button-row">
-          <button className="btn cancel-btn" onClick={onClose} disabled={loading}>Cancel</button>
-          <button className="btn save-btn" onClick={handleSubmit} disabled={loading}>
-            {loading ? 'Saving...' : 'Save User'}
-          </button>
-        </div>
-      </div>
-
-      <style>{`
-        .modal-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(0,0,0,0.35);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          z-index: 1000;
-          padding: 1rem;
-        }
-        .modal-container {
-          background: #fff;
-          padding: 2rem 2.5rem;
-          border-radius: 12px;
-          max-width: 420px;
-          width: 100%;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-        h2 {
-          margin-bottom: 1rem;
-          color: #19551B;
-          text-align: center;
-        }
-        .input-label {
-          display: flex;
-          align-items: center;
-          border-bottom: 2px solid #19551B;
-          padding: 0.25rem 0.5rem;
-          gap: 0.5rem;
-        }
-        input, select {
-          flex: 1;
-          border: none;
-          outline: none;
-          font-size: 1rem;
-          padding: 0.5rem 0;
-          color: #333;
-          background: transparent;
-        }
-        select {
-          appearance: none;
-          cursor: pointer;
-        }
-        .input-icon {
-          color: #19551B;
-          font-size: 1.25rem;
-          min-width: 24px;
-        }
-        .input-error {
-          border-color: #ff3b30 !important;
-        }
-        .error-text {
-          color: #ff3b30;
-          font-size: 0.85rem;
-          margin-left: 2.5rem;
-          margin-top: 0.1rem;
-        }
-        .role-select-label {
-          padding-right: 0;
-        }
-        .password-strength {
-          font-size: 0.9rem;
-          color: #666;
-          margin-left: 2.5rem;
-        }
-        .strength-bars {
-          display: flex;
-          gap: 3px;
-          margin-top: 4px;
-        }
-        .strength-bar {
-          flex: 1;
-          height: 5px;
-          border-radius: 3px;
-          background-color: #ddd;
-        }
-        .button-row {
-          display: flex;
-          justify-content: flex-end;
-          gap: 1rem;
-          margin-top: 1rem;
-        }
-        .btn {
-          padding: 0.6rem 1.5rem;
-          font-weight: 600;
-          border-radius: 6px;
-          border: none;
-          cursor: pointer;
-          font-size: 1rem;
-          transition: background-color 0.25s ease;
-        }
-        .cancel-btn {
-          background: #ccc;
-          color: #333;
-        }
-        .cancel-btn:hover:not(:disabled) {
-          background: #b3b3b3;
-        }
-        .save-btn {
-          background: #19551B;
-          color: white;
-        }
-        .save-btn:hover:not(:disabled) {
-          background: #144314;
-        }
-        .btn:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-      `}</style>
-    </div>
-  );
-};
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title);
 
 const Dashboard = () => {
   const { authToken } = useContext(AuthContext);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
-
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
-
   const [addUserModal, setAddUserModal] = useState(false);
   const [loadingAddUser, setLoadingAddUser] = useState(false);
 
-  // Responsive sidebar toggling
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
@@ -331,38 +30,39 @@ const Dashboard = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Fetch users on mount and when authToken changes
-  useEffect(() => {
+  const fetchUsers = async () => {
     if (!authToken) return;
-
     setLoadingUsers(true);
-    axios.get('http://localhost:5000/user', {
-      headers: { Authorization: `Bearer ${authToken}` }
-    })
-    .then(res => setUsers(res.data || []))
-    .catch(err => {
+    try {
+      const res = await axios.get('http://localhost:5000/user', {
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
+      setUsers(res.data || []);
+    } catch (err) {
       console.error(err);
       setUsers([]);
-    })
-    .finally(() => setLoadingUsers(false));
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
   }, [authToken]);
 
-  // User stats
   const totalUsers = users.length;
   const farmerCount = users.filter(u => u.role !== 'expert').length;
   const expertCount = users.filter(u => u.role === 'expert').length;
 
-  // Monthly signups aggregation
   const monthly = users.reduce((acc, u) => {
     if (!u.created_at) return acc;
-    const key = new Date(u.created_at).toLocaleDateString('en-US', { month:'short', year:'numeric' });
+    const key = new Date(u.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     acc[key] = (acc[key] || 0) + 1;
     return acc;
   }, {});
-  const months = Object.keys(monthly).sort((a,b) => new Date(a) - new Date(b));
+  const months = Object.keys(monthly).sort((a, b) => new Date(a) - new Date(b));
   const signupsPerMonth = months.map(m => monthly[m]);
 
-  // Chart data
   const doughnutData = {
     labels: ['Farmers', 'Experts'],
     datasets: [{
@@ -383,7 +83,6 @@ const Dashboard = () => {
     }]
   };
 
-  // Add user API call handler
   const handleAddUserSave = async (userData) => {
     setLoadingAddUser(true);
     try {
@@ -392,12 +91,7 @@ const Dashboard = () => {
       });
       alert('User added successfully');
       setAddUserModal(false);
-      // Refresh user list
-      setLoadingUsers(true);
-      const res = await axios.get('http://localhost:5000/user', {
-        headers: { Authorization: `Bearer ${authToken}` }
-      });
-      setUsers(res.data || []);
+      await fetchUsers(); // Refresh list
     } catch (error) {
       console.error(error);
       alert('Failed to add user');
@@ -411,7 +105,6 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       {sidebarOpen && <Sidebar toggleSidebar={toggleSidebar} isMobile={isMobile} />}
-
       <main className={`main-content ${sidebarOpen ? '' : 'sidebar-collapsed'}`}>
         {isMobile && !sidebarOpen && (
           <button className="mobile-menu-button" onClick={toggleSidebar}>
@@ -420,7 +113,7 @@ const Dashboard = () => {
         )}
         <Header />
 
-        {/* Admin Info Card */}
+                {/* Admin Info Card */}
 <motion.div
   className="admin-card"
   initial={{ opacity: 0, y: 20 }}
@@ -432,9 +125,10 @@ const Dashboard = () => {
   </div>
   <div className="admin-info">
     <h3>David Pamphil</h3>
-    <h4>Backend Developer</h4>
+    <div className="admin-role">Backend Developer</div>
   </div>
 </motion.div>
+
 
 
         <div className="stats-cards">
@@ -609,16 +303,17 @@ const Dashboard = () => {
             display: none;
           }
         }     
-                  .admin-card {
+              .admin-card {
   display: flex;
   align-items: center;
-  gap: 1rem;
   background: #fff;
   padding: 1rem;
   border-radius: 10px;
-  margin-bottom: 2rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  min-height: 100px;
 }
+
 .admin-avatar {
   background: #19551B;
   color: white;
@@ -627,17 +322,29 @@ const Dashboard = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 1rem;
 }
+
+.admin-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0.2rem 0;
+}
+
 .admin-info h3 {
   margin: 0;
-  color: #19551B;
   font-size: 1.2rem;
+  color: #19551B;
 }
-.admin-info p {
-  margin: 0;
+
+.admin-role {
+  margin-top: auto;
   color: #666;
   font-size: 0.95rem;
 }
+
 
       `}</style>
     </div>
