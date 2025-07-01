@@ -8,6 +8,7 @@ import Files from './components/Files';
 import Admin from './components/Admin';
 import Settings from './components/Settings';
 import Login from './components/Login';
+import Forum from './components/Forum';
 
 import { AuthContext } from './context/AuthContext';
 
@@ -19,34 +20,28 @@ import './styles/files.css';
 import './styles/admin.css';
 import './styles/settings.css';
 import './styles/login.css';
+import './styles/ForumPage.css';
 
 function App() {
   const { authToken, login, logout } = useContext(AuthContext);
 
-  // Protected Route Wrapper
   const ProtectedRoute = ({ children }) => {
-    if (!authToken) {
-      return <Navigate to="/login" replace />;
-    }
-    return children;
+    return authToken ? children : <Navigate to="/login" replace />;
   };
 
   return (
     <Router>
       <div className="app">
         <Routes>
+          {/* Public Login Route */}
           <Route
             path="/login"
             element={
-              authToken ? (
-                <Navigate to="/" replace />
-              ) : (
-                // Pass the login function to Login component
-                <Login onLogin={login} />
-              )
+              authToken ? <Navigate to="/" replace /> : <Login onLogin={login} />
             }
           />
 
+          {/* Protected Routes */}
           <Route
             path="/"
             element={
@@ -55,7 +50,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/users"
             element={
@@ -64,7 +58,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/courses"
             element={
@@ -73,7 +66,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/files"
             element={
@@ -82,7 +74,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/admin"
             element={
@@ -91,12 +82,19 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/settings"
             element={
               <ProtectedRoute>
                 <Settings onLogout={logout} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/forum"
+            element={
+              <ProtectedRoute>
+                <Forum onLogout={logout} />
               </ProtectedRoute>
             }
           />
