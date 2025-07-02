@@ -1,4 +1,8 @@
 import React from 'react';
+<<<<<<< HEAD
+=======
+/*import Header from './Header'; */
+>>>>>>> cd44ef185f10c5005131cbe8fcc5b25794206aed
 import { NavLink } from 'react-router-dom';
 import { 
   FiHome, 
