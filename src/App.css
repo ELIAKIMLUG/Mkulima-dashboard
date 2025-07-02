@@ -1,0 +1,64 @@
+:root {
+  --primary-color: #4CAF50;
+  --secondary-color: #388E3C;
+  --accent-color: #8BC34A;
+  --dark-color: #2E7D32;
+  --light-color: #C8E6C9;
+  --text-color: #333;
+  --light-text: #f5f5f5;
+  --sidebar-width: 250px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f9f9f9;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 70px;
+  }
+  
+  .sidebar-item span {
+    display: none;
+  }
+  
+  .sidebar-header h2 {
+    display: none;
+  }
+  
+  .sidebar-header img {
+    margin-right: 0;
+  }
+  
+  .main-content {
+    margin-left: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-container {
+    flex-direction: column;
+  }
+  
+  .stat-card {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  .target-card {
+    width: 100%;
+  }
+}
